@@ -25,7 +25,8 @@ defmodule NewsApi.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:ecto, "~> 3.0"},
       {:ecto_sql, "~> 3.0"},
-      {:postgrex, "~> 0.16.0"}
+      {:postgrex, "~> 0.16.0"},
+      {:jason, "~> 1.0"}
     ]
   end
 end

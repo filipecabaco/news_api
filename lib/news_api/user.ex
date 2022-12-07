@@ -10,6 +10,7 @@ defmodule NewsApi.User do
 
   def new(name, token) do
     params = %{name: name, token: Base.encode64(token)}
-    cast(%__MODULE__{}, params, [:name, :token])
+    changeset = cast(%__MODULE__{}, params, [:name, :token])
+    NewsApi.Repo.insert(changeset)
   end
 end
