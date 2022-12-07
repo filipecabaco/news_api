@@ -8,6 +8,10 @@ defmodule NewsApi.Router do
   plug(:dispatch)
 
   get "/" do
+    handle_bearer_token(conn, &handle_fetch_topics/2)
+  end
+
+  get "/me" do
     handle_bearer_token(conn, &handle_fetch_user/2)
   end
 
@@ -31,6 +35,15 @@ defmodule NewsApi.Router do
 
   match _ do
     send_resp(conn, 404, "not found")
+  end
+
+  defp handle_fetch_topics(conn, token) do
+    user = NewsApi.User.get(token)
+    topics = NewsApi.Topic.get(user)
+
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(200, Jason.encode!(topics))
   end
 
   defp handle_fetch_user(conn, token) do
