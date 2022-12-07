@@ -22,7 +22,10 @@ defmodule NewsApi.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:plug_cowboy, "~> 2.6"}
+      {:plug_cowboy, "~> 2.0"},
+      {:ecto, "~> 3.0"},
+      {:ecto_sql, "~> 3.0"},
+      {:postgrex, "~> 0.16.0"}
     ]
   end
 end
