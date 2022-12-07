@@ -1,5 +1,6 @@
 defmodule NewsApi.Router do
   use Plug.Router
+
   use Plug.ErrorHandler
 
   plug(:match)
@@ -53,8 +54,8 @@ defmodule NewsApi.Router do
   defp handle_delete_topic(conn, token) do
     %{"topic" => topic} = conn.params
     user = NewsApi.User.get(token)
-    NewsApi.Topic.delete(user, topic)
-    send_resp(conn, 204, "")
+    topic = NewsApi.Topic.delete(user, topic)
+    send_resp(conn, 204, Jason.encode!(topic))
   end
 
   defp handle_bearer_token(conn, on_success) do
@@ -68,6 +69,10 @@ defmodule NewsApi.Router do
   def handle_errors(conn, %{reason: %Ecto.InvalidChangesetError{changeset: changeset}}) do
     msg = Ecto.Changeset.traverse_errors(changeset, fn {msg, _} -> msg end)
     send_resp(conn, 400, Jason.encode!(msg))
+  end
+
+  def handle_errors(conn, %{reason: %Ecto.NoResultsError{}}) do
+    send_resp(conn, 404, "not found")
   end
 
   def handle_errors(conn, _) do
