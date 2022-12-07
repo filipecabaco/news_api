@@ -1,6 +1,7 @@
 defmodule NewsApi.Topic do
   use Ecto.Schema
   import Ecto.Changeset
+  @derive {Jason.Encoder, only: [:topic]}
 
   schema "topics" do
     field(:topic, :string)
@@ -10,9 +11,12 @@ defmodule NewsApi.Topic do
   def new(%NewsApi.User{} = user, topic) do
     params = %{topic: topic}
 
-    %__MODULE__{}
-    |> cast(params, [:topic])
-    |> put_assoc(:user, user)
-    |> unique_constraint([:topic, :user_id])
+    changeset =
+      %__MODULE__{}
+      |> cast(params, [:topic])
+      |> put_assoc(:user, user)
+      |> unique_constraint([:topic, :user_id])
+
+    NewsApi.Repo.insert!(changeset)
   end
 end
