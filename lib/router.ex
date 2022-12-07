@@ -14,6 +14,10 @@ defmodule NewsApi.Router do
     handle_bearer_token(conn, &handle_add_topic/2)
   end
 
+  delete "/:topic" do
+    handle_bearer_token(conn, &handle_delete_topic/2)
+  end
+
   post "/" do
     %{"name" => name} = conn.body_params
     token = Ecto.UUID.generate()
@@ -44,6 +48,13 @@ defmodule NewsApi.Router do
     conn
     |> put_resp_content_type("application/json")
     |> send_resp(200, Jason.encode!(topic))
+  end
+
+  defp handle_delete_topic(conn, token) do
+    %{"topic" => topic} = conn.params
+    user = NewsApi.User.get(token)
+    NewsApi.Topic.delete(user, topic)
+    send_resp(conn, 204, "")
   end
 
   defp handle_bearer_token(conn, on_success) do

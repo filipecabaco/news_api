@@ -1,6 +1,7 @@
 defmodule NewsApi.Topic do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   @derive {Jason.Encoder, only: [:topic]}
 
   schema "topics" do
@@ -18,5 +19,12 @@ defmodule NewsApi.Topic do
       |> unique_constraint([:topic, :user_id])
 
     NewsApi.Repo.insert!(changeset)
+  end
+
+  def delete(%NewsApi.User{id: id}, topic) do
+    topic =
+      NewsApi.Repo.one!(from(t in __MODULE__, where: t.topic == ^topic, where: t.user_id == ^id))
+
+    NewsApi.Repo.delete!(topic)
   end
 end
